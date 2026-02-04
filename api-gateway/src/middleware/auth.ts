@@ -45,8 +45,14 @@ export const authMiddleware = async (
 };
 
 export const generateToken = (payload: Omit<JWTPayload, 'iat' | 'exp'>): string => {
-  return jwt.sign(payload, config.jwt.secret, {
-    expiresIn: config.jwt.expiresIn,
-    issuer: config.jwt.issuer,
-  });
+  const token = jwt.sign(
+    payload,
+    config.jwt.secret,
+    {
+      expiresIn: '15m',
+      issuer: 'ai-assistant',
+    } as jwt.SignOptions
+  );
+  
+  return token;
 };

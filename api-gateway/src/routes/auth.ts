@@ -1,11 +1,9 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { Pool } from 'pg';
-import { config } from '../config';
+import { pool } from '../services/database';
 import { generateToken } from '../middleware/auth';
 
 const router = Router();
-const pool = new Pool({ connectionString: config.database.url });
 
 router.post('/login', async (req: Request, res: Response) => {
   try {
@@ -18,7 +16,8 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
-    // Get user from database
+    console.log('Attempting login for:', email);
+
     const result = await pool.query(
       `SELECT u.*, r.name as role_name, r.permissions 
        FROM users u 
@@ -28,6 +27,7 @@ router.post('/login', async (req: Request, res: Response) => {
     );
 
     if (result.rows.length === 0) {
+      console.log('User not found:', email);
       return res.status(401).json({
         success: false,
         error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' }
@@ -35,17 +35,17 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     const user = result.rows[0];
+    console.log('User found:', user.email);
 
-    // Verify password
     const isValid = await bcrypt.compare(password, user.password_hash);
     if (!isValid) {
+      console.log('Invalid password for:', email);
       return res.status(401).json({
         success: false,
         error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' }
       });
     }
 
-    // Generate token
     const token = generateToken({
       userId: user.id,
       email: user.email,
@@ -54,14 +54,15 @@ router.post('/login', async (req: Request, res: Response) => {
       permissions: user.permissions || []
     });
 
-    // Update last login
     await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id]);
+
+    console.log('Login successful for:', email);
 
     res.json({
       success: true,
       data: {
         access_token: token,
-        expires_in: 900, // 15 minutes
+        expires_in: 900,
         user: {
           id: user.id,
           email: user.email,
