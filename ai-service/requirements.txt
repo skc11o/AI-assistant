@@ -1,0 +1,27 @@
+# Web Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# OpenAI Integration
+openai==1.7.2
+
+# Vector Database
+faiss-cpu==1.13.2
+numpy==1.26.3
+
+# Database
+psycopg2-binary==2.9.9
+
+# Document Processing
+pypdf2==3.0.1
+
+# Security & Auth
+pyjwt==2.8.0
+
+# Utilities
+python-dotenv==1.0.0
+
+# CORS
+python-multipart==0.0.6

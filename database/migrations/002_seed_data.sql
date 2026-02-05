@@ -8,7 +8,7 @@ INSERT INTO roles (name, permissions) VALUES
 -- This is bcrypt hash of "Password123!"
 INSERT INTO users (email, password_hash, full_name, department, role_id) VALUES
 ('admin@company.com', 
- '$2a$10$8K1p/a0dL3LKkx7KqGKZ3OqYhK8S6Z9Y3YhV6JqKxKWd8QZxN9F5C', 
+ '$2a$12$E3SU7b/UW7wNWsvVWxHpIefeJq/xGuSUG7BueN9lhcaYs2Rvd4XFy', 
  'Admin User', 
  'IT', 
  1);
